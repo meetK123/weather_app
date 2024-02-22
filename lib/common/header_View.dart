@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:weather/provider/weather_provider.dart';
 
 class HeaderView extends StatelessWidget {
-  const HeaderView({
+   HeaderView({
     super.key,
   });
 
+
+  final String date = DateFormat.yMMMd().format(DateTime.now());
+
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final weatherProvider =
+        Provider.of<WeatherProvider>(context, listen: false);
+    return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.location_on_outlined),
+            const Icon(Icons.location_on_outlined,size: 24),
             Text(
-              'Ahmedabad',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              weatherProvider.area,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
           ],
         ),
-        Center(
+         Center(
           child: Text(
-            'July 30 ,2022',
-            style: TextStyle(color: Colors.grey, fontSize: 14),
+            date,
+            style: const TextStyle(color: Colors.grey, fontSize: 14),
           ),
         ),
       ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weather/provider/weather_provider.dart';
 
 class WeatherView extends StatelessWidget {
   const WeatherView({
@@ -7,9 +9,25 @@ class WeatherView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
+
+ final weatherProvider =   context.watch<WeatherProvider>();
+          if(weatherProvider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }else {
+            return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 2,
+            spreadRadius:1
+
+          )
+        ],
       ),
       child: Column(
         children: [
@@ -17,48 +35,51 @@ class WeatherView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Image.asset(
-                'assets/weather/02d.png',
+                'assets/weather/${weatherProvider.weather.weather?[0].icon??'01d'}.png',
                 height: 75,
                 width: 75,
               ),
-              const Column(
+               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '21' " \u00B0",
-                    style: TextStyle(
+                    '${weatherProvider.weather.main?.temp?.toInt()??0}' " \u00B0",
+                    style: const TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    'Cloudy',
-                    style: TextStyle(fontWeight: FontWeight.w500),
+                   Text(
+                    weatherProvider.weather.weather?.first.main??'',
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           IntrinsicHeight(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _windAndHumidityView(isWind: true, num: 8),
-                const VerticalDivider(
-                  color: Colors.black,
+                _windAndHumidityView(isWind: true, num: weatherProvider.weather.wind?.speed?.toInt() ?? 0),
+                 const VerticalDivider(
+                  color: Colors.grey,
                   thickness: 2,
                 ),
-                _windAndHumidityView(isWind: false, num: 27),
+                _windAndHumidityView(isWind: false, num:weatherProvider.weather.main?.humidity ?? 0),
               ],
             ),
           ),
         ],
       ),
     );
+          }
   }
 
-  Column _windAndHumidityView({required bool isWind, required double num}) {
+  Column _windAndHumidityView({required bool isWind, required int num}) {
     return Column(
       children: [
         Image.asset(

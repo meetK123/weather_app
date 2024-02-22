@@ -4,7 +4,6 @@ import 'package:weather/common/header_View.dart';
 import 'package:weather/common/weather_view.dart';
 import 'package:weather/provider/weather_provider.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -14,23 +13,39 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+
+    context.read<WeatherProvider>().getUserLocation(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Consumer<WeatherProvider>(
-          builder: (BuildContext context, WeatherProvider value, Widget? child) { return const Column(
+    return Consumer<WeatherProvider>(
+      builder: (context, value, child) => Scaffold(
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               HeaderView(),
-
-              WeatherView(),
-
+              const SizedBox(
+                height: 50,
+              ),
+              const WeatherView(),
             ],
-          ); },
-
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: onRefresh,
+          tooltip: 'Refresh',
+          child: const Icon(Icons.refresh),
         ),
       ),
     );
   }
+
+  void onRefresh() {
+    context.read<WeatherProvider>().getUserLocation(context);
+  }
 }
-
-
